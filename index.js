@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 
 var http = require('http');
+var Iconv = require('iconv').Iconv;
 
 app.set('port', (process.env.PORT || 5001));
 app.use(express.static(__dirname + '/public'));
@@ -17,8 +18,11 @@ app.get("/blclnt", function(req, res) {
 	var url = "http://blsetup.city.kyoto.jp/cgi-bin/blclnt.cgi?=" + req.param("line");
 	http.get(url, function(blclnt) {
 		blclnt.on('data', function (chunk) {
+			var iconv = new Iconv('Shift-JIS', 'UTF-8//TRANSLIT//IGNORE');
+			text = iconv.convert(chunk).toString();
+
 			res.setHeader("Content-Type", "text/plain");
-			res.send(chunk);
+			res.send(text);
 		});
 
 	}).on('error', function(e) {
