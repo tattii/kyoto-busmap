@@ -5,18 +5,34 @@
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 	<title></title>
 	<script src="/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+	<link rel="import" href="/bower_components/core-header-panel/core-header-panel.html">
 	<link rel="import" href="kyoto-bus.html">
 
 	<style>
 		body { font-family: sans-serif; }
+		core-header-panel { height: 100%; } 
+		.core-header { background-color: #4F7DC9; }
+		.core-header h3 { color:#fff; font-weight:normal; padding-left: 1em; }
 	</style>
 </head>
 <body fullbleed>
+	<core-header-panel mode="stan" id="head" flex>
+		<div class="core-header">
+			<h3>百万遍　西行き</h3>
+		</div>
 
-	<kyoto-bus number="17"  destination="四条河原町・京都駅"   timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075022.htm"></kyoto-bus>
-	<kyoto-bus number="3"   destination="四条河原町・松尾橋"   timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075021.htm"></kyoto-bus>
-	<kyoto-bus number="201" destination="千本今出川・四条大宮" timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075023.htm"></kyoto-bus>
-	
+		<div class="content">
+			<kyoto-bus number="17" destination="四条河原町・京都駅"
+				timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075022.htm"
+				lineParam="075.100-170.60.10-175.60.10-171.60.10-172.61.10"></kyoto-bus>
+			<kyoto-bus number="3" destination="四条河原町・松尾橋"
+				timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075021.htm"
+				lineParam="075.006-301.54.66-306.54.66-307.54.66-311.54.64-313.54.64-314.54.64"></kyoto-bus>
+			<kyoto-bus number="201" destination="千本今出川・四条大宮"
+				timetableurl="http://www.city.kyoto.jp/kotsu/busdia/hyperdia/075023.htm"
+				lineParam="075.301-811.54.32-812.54.32"></kyoto-bus>
+		</div>
+	</core-header-panel>
 
 </body>
 </html>

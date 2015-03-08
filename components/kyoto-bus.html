@@ -4,7 +4,7 @@
 <link rel="import" href="/bower_components/core-icons/maps-icons.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 
-<polymer-element name="kyoto-bus" attributes="number destination locationurl timetableurl">
+<polymer-element name="kyoto-bus" attributes="number destination lineParam timetableurl">
 <template>
 <style>
 .container {
@@ -22,8 +22,8 @@
 }	
 .main {	position:absolute; left:48px; right:48px; }
 .destination h3 {
-		margin:0; margin-left:0.5em;
-		font-weight:normal; font-size:18px;
+		margin:0; margin-left:0.5em; padding-top:2px;
+		font-weight:normal; font-size:16px;
 }
 .position { text-align:center; height:40px; } 
 .arrow { padding: 8px 0; }
@@ -50,11 +50,11 @@
 				<h3>{{destination}}</h3>
 			</div>
 			<div class="position">
-					<paper-icon-button class="pos" id="pos1" icon="" disabled></paper-icon-button>	
+					<paper-icon-button class="pos {{pos1_active}}" id="pos1" icon="{{pos1_icon}}" disabled></paper-icon-button>	
 					<paper-icon-button class="arrow" icon="arrow-back" disabled></paper-icon-button>	
-					<paper-icon-button class="pos active" id="pos2" icon="maps:directions-bus" disabled></paper-icon-button>	
+					<paper-icon-button class="pos {{pos2_active}}" id="pos2" icon="{{pos2_icon}}" disabled></paper-icon-button>	
 					<paper-icon-button class="arrow" icon="arrow-back" disabled></paper-icon-button>	
-					<paper-icon-button class="pos" id="pos3" icon="" disabled></paper-icon-button>
+					<paper-icon-button class="pos {{pos3_active}}" id="pos3" icon="{{pos3_icon}}" disabled></paper-icon-button>	
 			</div>
 					<div class="pos-label">
 						<div>1つ前</div>
@@ -71,8 +71,9 @@
 
 	<core-ajax
 		auto
+		id="blclnt"
 		url="/blclnt"
-		params='{"line": "009.100-170.60.12-175.60.12-171.60.12-172.61.12"}'
+  		params='{"line": "{{lineParam}}"}'
 		handleAs="text"
 		on-core-response="{{getAjax}}">
 	</core-ajax>
@@ -82,8 +83,29 @@
 <script>
 	Polymer({
 		ready: function() {},
+		showTimetable: function() {
+			document.location = this.timetableurl;
+		},
 		getAjax: function(e, res) {
-			console.log(res); 
+			var html = res.response;
+			console.log(html);
+			var m = html.match(/↑.*?<BR>/g);
+			var re = /BLINK/;
+			var p = m.map(function(d){ console.log(d); return re.test(d); });
+			console.log(p);
+
+			this.pos1_icon   = (p[0]) ? "maps:directions-bus" : "";
+			this.pos1_active = (p[0]) ? "active" : "";
+
+			this.pos2_icon   = (p[1]) ? "maps:directions-bus" : "";
+			this.pos2_active = (p[1]) ? "active" : "";
+
+			this.pos3_icon   = (p[2]) ? "maps:directions-bus" : "";
+			this.pos3_active = (p[2]) ? "active" : "";
+
+			this.async(function(){
+				this.$.blclnt.go();
+			}, null, 10000);
 		}
 	});
 </script>
