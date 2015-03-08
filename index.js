@@ -22,6 +22,7 @@ app.get("/blclnt", function(req, res) {
 			text = iconv.convert(chunk).toString();
 
 			res.setHeader("Content-Type", "text/plain");
+			res.setHeader("Access-Control-Allow-Origin", "*");
 			res.send(text);
 		});
 
