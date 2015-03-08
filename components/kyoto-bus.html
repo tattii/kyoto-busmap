@@ -1,0 +1,112 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="/bower_components/core-icons/maps-icons.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+
+<polymer-element name="kyoto-bus" attributes="number destination lineParam timetableurl">
+<template>
+<style>
+.container {
+	height: 84px;
+	max-width:640px;
+	border-bottom: 1px solid #ccc;
+}
+.number {
+	position:absolute; left:0;
+	width:48px; height: 84px;
+	background:#0d47a1;
+	font-size:20px; color:#fff; font-weight:bold;
+	text-align:center;
+	line-height: 84px;
+}	
+.main {	position:absolute; left:48px; right:48px; }
+.destination h3 {
+		margin:0; margin-left:0.5em; padding-top:2px;
+		font-weight:normal; font-size:16px;
+}
+.position { text-align:center; height:40px; } 
+.arrow { padding: 8px 0; }
+.pos { background:#e0e0e0; border-radius:20px; }
+.position .active { background:#b2ff59; color:#fff; }
+.pos-label { position:absolute; left:50%; width:184px; margin-left:-92px;}
+.pos-label div { width:40px; height: 10px; font-size:10px; position:relative; float:left; text-align:center; }
+.pos-label .pos-label-pad { width:32px; }
+.timetable {
+	position:absolute; right:0;
+	width:48px; height:84px;
+	font-size:20px; color:#616161;
+	text-align:center;
+}
+.timetable paper-icon-button {
+	margin-top: 22px;
+}
+</style>
+	
+	<div class="container">
+		<div class="number">{{number}}</div>
+		<div class="main">
+			<div class="destination">
+				<h3>{{destination}}</h3>
+			</div>
+			<div class="position">
+					<paper-icon-button class="pos {{pos1_active}}" id="pos1" icon="{{pos1_icon}}" disabled></paper-icon-button>	
+					<paper-icon-button class="arrow" icon="arrow-back" disabled></paper-icon-button>	
+					<paper-icon-button class="pos {{pos2_active}}" id="pos2" icon="{{pos2_icon}}" disabled></paper-icon-button>	
+					<paper-icon-button class="arrow" icon="arrow-back" disabled></paper-icon-button>	
+					<paper-icon-button class="pos {{pos3_active}}" id="pos3" icon="{{pos3_icon}}" disabled></paper-icon-button>	
+			</div>
+					<div class="pos-label">
+						<div>1つ前</div>
+						<div class="pos-label-pad"> </div>
+						<div>3つ前</div>
+						<div class="pos-label-pad"> </div>
+						<div>5つ前</div>
+					</div>
+			</div>
+		<div class="timetable">
+			<paper-icon-button icon="schedule" title="時刻表" on-click="{{showTimetable}}"></paper-icon-button>
+		</div>
+	</div>
+
+	<core-ajax
+		auto
+		id="blclnt"
+		url="/blclnt"
+  		params='{"line": "{{lineParam}}"}'
+		handleAs="text"
+		on-core-response="{{getAjax}}">
+	</core-ajax>
+</template>
+
+
+<script>
+	Polymer({
+		ready: function() {},
+		showTimetable: function() {
+			document.location = this.timetableurl;
+		},
+		getAjax: function(e, res) {
+			var html = res.response;
+			console.log(html);
+			var m = html.match(/↑.*?<BR>/g);
+			var re = /BLINK/;
+			var p = m.map(function(d){ console.log(d); return re.test(d); });
+			console.log(p);
+
+			this.pos1_icon   = (p[0]) ? "maps:directions-bus" : "";
+			this.pos1_active = (p[0]) ? "active" : "";
+
+			this.pos2_icon   = (p[1]) ? "maps:directions-bus" : "";
+			this.pos2_active = (p[1]) ? "active" : "";
+
+			this.pos3_icon   = (p[2]) ? "maps:directions-bus" : "";
+			this.pos3_active = (p[2]) ? "active" : "";
+
+			this.async(function(){
+				this.$.blclnt.go();
+			}, null, 10000);
+		}
+	});
+</script>
+</polymer-element>
